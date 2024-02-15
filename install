@@ -138,14 +138,14 @@ setup_git_authorship() {
 install_vscode_extensions() {
 
     process "Searching for extensions list for vscode"
-    if [[ -f "${DOTFILES_DIR}/opt/files/vscode_extensions.txt" ]]; then
-        process "Installing vscode extensions from ${DOTFILES_DIR}/opt/files/vscode_extensions.txt"
+    if [[ -f "${DOTFILES_DIR}/configs/.vscode_extensions.txt" ]]; then
+        process "Installing vscode extensions from ${DOTFILES_DIR}/configs/.vscode_extensions.txt"
 
-        cat "${DOTFILES_DIR}/opt/files/vscode_extensions.txt" | xargs -L 1 code --install-extension
+        cat "${DOTFILES_DIR}/configs/.vscode_extensions.txt" | xargs -L 1 code --install-extension
 
         success "Vscode extensions installed successfully."
     else
-        warning "${DOTFILES_DIR}/opt/files/vscode_extensions.txt not found"
+        warning "${DOTFILES_DIR}/configs/.vscode_extensions.txt not found"
     fi
 }
 
