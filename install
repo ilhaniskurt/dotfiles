@@ -107,31 +107,31 @@ setup_git_authorship() {
     if [[ -z "$gitUserName" ]]; then
         if [[ -n "$GIT_AUTHOR_NAME" ]]; then
             git config --global user.name "$GIT_AUTHOR_NAME"
-            success "Git user name set to '$GIT_AUTHOR_NAME'"
+            process "Git user name set to '$GIT_AUTHOR_NAME'"
             changesMade=true
         else
             warning "Git user name not set and 'GIT_AUTHOR_NAME' variable is empty. Please set it manually."
         fi
     else
-        success "Git user name is already set to '$gitUserName'. No changes made."
+        process "Git user name is already set to '$gitUserName'. No changes made."
     fi
 
     if [[ -z "$gitUserEmail" ]]; then
         if [[ -n "$GIT_AUTHOR_EMAIL" ]]; then
             git config --global user.email "$GIT_AUTHOR_EMAIL"
-            success "Git user email set to '$GIT_AUTHOR_EMAIL'"
+            process "Git user email set to '$GIT_AUTHOR_EMAIL'"
             changesMade=true
         else
             warning "Git user email not set and 'GIT_AUTHOR_EMAIL' variable is empty. Please set it manually."
         fi
     else
-        success "Git user email is already set to '$gitUserEmail'. No changes made."
+        process "Git user email is already set to '$gitUserEmail'. No changes made."
     fi
 
     if [[ "$changesMade" = true ]]; then
         success "Git configuration updated successfully."
     else
-        success "Git configuration was already up to date. No changes needed."
+        success "No changes have been made to git config"
     fi
 }
 
