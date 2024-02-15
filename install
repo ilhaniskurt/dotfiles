@@ -1,0 +1,148 @@
+#!/usr/bin/env bash
+
+# Define constants for script
+LOG_FILE="${HOME}/Library/Logs/dotfiles_setup.log"
+GITHUB_USER="ilhaniskurt"
+GITHUB_REPO="dotfiles"
+GIT_AUTHOR_NAME="İlhan Yavuz İskurt"
+GIT_AUTHOR_EMAIL="85507446+ilhaniskurt@users.noreply.github.com"
+DOTFILES_DIR="${HOME}/.local/opt/${GITHUB_REPO}"
+
+# Log message with timestamp (Silent to console)
+log_message() {
+    local type=$1
+    local message=$2
+    echo "$(date '+%Y-%m-%d %H:%M:%S') [$type] $message" >> "${LOG_FILE}"
+}
+
+# Print and log process message
+process() {
+    log_message "PROCESSING" "$1"
+    printf "$(tput setaf 6)Processing: %s...$(tput sgr0)\n" "$1"
+}
+
+# Print and log success message
+success() {
+    log_message "SUCCESS" "$1"
+    printf "$(tput setaf 2)✓ Success:$(tput sgr0) %s\n" "$1"
+}
+
+# Print and log warning message
+warning() {
+    log_message "WARNING" "$1"
+    printf "$(tput setaf 3)⚠ Warning:$(tput sgr0) %s\n" "$1"
+}
+
+# Download and extract dotfiles repository
+download_dotfiles() {
+    process "Creating directory at ${DOTFILES_DIR} and setting permissions"
+    mkdir -p "${DOTFILES_DIR}"
+
+    process "Downloading repository to /tmp directory"
+    curl -#fLo /tmp/${GITHUB_REPO}.tar.gz "https://github.com/${GITHUB_USER}/${GITHUB_REPO}/tarball/main"
+
+    process "Extracting files to ${DOTFILES_DIR}"
+    tar -zxf /tmp/${GITHUB_REPO}.tar.gz --strip-components 1 -C "${DOTFILES_DIR}"
+
+    process "Removing tarball from /tmp directory"
+    rm -rf /tmp/${GITHUB_REPO}.tar.gz
+
+    if [[ $? -eq 0 ]]; then
+        success "Repository downloaded and extracted to ${DOTFILES_DIR}"
+    else
+        warning "Failed to download or extract repository."
+    fi
+}
+
+# Create symbolic links for dotfiles
+link_dotfiles() {
+    if [[ -f "${DOTFILES_DIR}/opt/files" ]]; then
+        process "Symlinking dotfiles from ${DOTFILES_DIR}/opt/files"
+
+        while IFS= read -r line || [[ -n "$line" ]]; do
+            IFS=',' read -r src target <<< "$line"
+            src="${DOTFILES_DIR}/${src}"
+            target="${HOME}/${target}"
+            process "Linking ${src} to ${target}"
+            mkdir -p "$(dirname "$target")"
+            ln -fs "$src" "$target"
+        done < "${DOTFILES_DIR}/opt/files"
+
+        success "Dotfiles linked successfully."
+    else
+        warning "${DOTFILES_DIR}/opt/files not found."
+    fi
+}
+
+# Install Homebrew and run initial setup
+install_homebrew() {
+    process "Installing Homebrew"
+    export PATH=/opt/homebrew/bin:$PATH
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+    process "Running brew doctor"
+    brew doctor
+
+    if [[ $? -eq 0 ]]; then
+        success "Homebrew installed and ready"
+    else
+        warning "Homebrew installation or setup failed."
+    fi
+
+    process "Running brew bundle"
+    brew bundle --file "${DOTFILES_DIR}/opt/Brewfile"
+    
+    if [[ $? -eq 0 ]]; then
+        success "Brew bundle completed successfully"
+    else
+        warning "Brew bundle encountered issues."
+    fi
+}
+
+# Configure Git authorship
+setup_git_authorship() {
+    local gitUserName=$(git config --global user.name)
+    local gitUserEmail=$(git config --global user.email)
+    local changesMade=false
+
+    if [[ -z "$gitUserName" ]]; then
+        if [[ -n "$GIT_AUTHOR_NAME" ]]; then
+            git config --global user.name "$GIT_AUTHOR_NAME"
+            success "Git user name set to '$GIT_AUTHOR_NAME'"
+            changesMade=true
+        else
+            warning "Git user name not set and 'GIT_AUTHOR_NAME' variable is empty. Please set it manually."
+        fi
+    else
+        success "Git user name is already set to '$gitUserName'. No changes made."
+    fi
+
+    if [[ -z "$gitUserEmail" ]]; then
+        if [[ -n "$GIT_AUTHOR_EMAIL" ]]; then
+            git config --global user.email "$GIT_AUTHOR_EMAIL"
+            success "Git user email set to '$GIT_AUTHOR_EMAIL'"
+            changesMade=true
+        else
+            warning "Git user email not set and 'GIT_AUTHOR_EMAIL' variable is empty. Please set it manually."
+        fi
+    else
+        success "Git user email is already set to '$gitUserEmail'. No changes made."
+    fi
+
+    if [[ "$changesMade" = true ]]; then
+        success "Git configuration updated successfully."
+    else
+        success "Git configuration was already up to date. No changes needed."
+    fi
+}
+
+# Main installation function
+install() {
+    log_message "INFO" "Starting installation process"
+    download_dotfiles
+    install_homebrew
+    link_dotfiles
+    setup_git_authorship
+    success "Installation process completed successfully."
+}
+
+install

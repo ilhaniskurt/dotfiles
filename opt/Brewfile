@@ -1,0 +1,5 @@
+tap "homebrew/bundle"
+tap "homebrew/cask-fonts"
+brew "node"
+cask "font-jetbrains-mono-nerd-font"
+cask "visual-studio-code"
