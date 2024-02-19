@@ -1,7 +1,7 @@
 {
     "editor.fontSize": 16,
     "explorer.confirmDelete": false,
-    "terminal.external.osxExec": "Warp.app",
+    "terminal.external.osxExec": "Terminal.app",
     "workbench.iconTheme": "vscode-icons",
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
