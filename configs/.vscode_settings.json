@@ -1,5 +1,5 @@
 {
-    "editor.fontSize": 20,
+    "editor.fontSize": 16,
     "explorer.confirmDelete": false,
     "terminal.external.osxExec": "Warp.app",
     "workbench.iconTheme": "vscode-icons",
