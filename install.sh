@@ -173,25 +173,6 @@ setup_ssh() {
     success "SSH public key copied to clipboard."
 }
 
-
-install_vscode_extensions() {
-
-    process "Searching for extensions list for vscode"
-    if [[ -f "${DOTFILES_DIR}/configs/.vscode_extensions.txt" ]]; then
-        process "Installing vscode extensions from ${DOTFILES_DIR}/configs/.vscode_extensions.txt"
-
-        cat "${DOTFILES_DIR}/configs/.vscode_extensions.txt" | xargs -L 1 code --install-extension
-
-        success "Vscode extensions installed successfully."
-    else
-        warning "${DOTFILES_DIR}/configs/.vscode_extensions.txt not found"
-    fi
-}
-
-custom_jobs() {
-    install_vscode_extensions
-}
-
 # Main installation function
 install() {
     log_message "INFO" "Starting installation process"
@@ -200,7 +181,6 @@ install() {
     link_dotfiles
     setup_git_authorship
     setup_ssh
-    custom_jobs
     success "Installation process completed successfully."
 }
 
