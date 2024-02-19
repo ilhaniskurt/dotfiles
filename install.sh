@@ -62,7 +62,7 @@ link_dotfiles() {
         process "Symlinking dotfiles from ${DOTFILES_DIR}/opt/files"
 
         while IFS= read -r line || [[ -n "$line" ]]; do
-            IFS=',' read -r src target <<< "$line"
+            IFS='->' read -r src target <<< "$line"
             src="${DOTFILES_DIR}/${src}"
             target="${HOME}/${target}"
             process "Linking ${src} to ${target}"
