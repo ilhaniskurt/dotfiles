@@ -145,14 +145,14 @@ setup_ssh() {
         read -rp "Do you want to overwrite it? [y/N]: " overwrite
         if [[ $overwrite =~ ^[Yy]$ ]]; then
             # Create the SSH key, overwriting any existing keys
-            ssh-keygen -t ed25519 -C "$email" -f "$SSH_KEY_PATH" -N ""
+            ssh-keygen -t ed25519 -C "$USER_EMAIL" -f "$SSH_KEY_PATH" -N ""
             success "New SSH key generated."
         else
             success "Using existing SSH key."
         fi
     else
         # Create the SSH key if it doesn't exist
-        ssh-keygen -t ed25519 -C "$email" -f "$SSH_KEY_PATH" -N ""
+        ssh-keygen -t ed25519 -C "$USER_EMAIL" -f "$SSH_KEY_PATH" -N ""
     fi
 
     # Start the ssh-agent in the background
