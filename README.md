@@ -13,5 +13,5 @@ xcode-select --install
 2. Run the install script.
 
 ```zsh
-bash -c "$(curl -#fL raw.githubusercontent.com/ilhaniskurt/dotfiles/main/install)"
+bash -c "$(curl -#fL raw.githubusercontent.com/ilhaniskurt/dotfiles/main/install.sh)"
 ```
